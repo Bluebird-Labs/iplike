@@ -1,0 +1,27 @@
+---
+version: 2.1
+
+workflows:
+  build-workflow:
+    jobs:
+      - build-from-source
+
+jobs:
+  build-from-source:
+    machine: true
+    resource_class: bluebird-labs/c7g2xlarge
+    steps:
+      - checkout
+      - run:
+          name: Update autotools
+          command: |
+            git submodule update --init --recursive m4
+      - run:
+          name: Update generated configuration files
+          command: |
+            autoreconf -fvi
+      - run:
+          name: Configure and build from source
+          command: |
+            ./configure
+            make
